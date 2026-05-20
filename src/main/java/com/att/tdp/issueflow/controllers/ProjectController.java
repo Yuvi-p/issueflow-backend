@@ -5,6 +5,7 @@ import com.att.tdp.issueflow.services.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
@@ -48,4 +49,16 @@ public class ProjectController {
     // these records help us to receive the JSON exactly in the format that the client sends
     public record CreateProjectRequest(String name, String description, Long ownerId) {}
     public record UpdateProjectRequest(String name, String description) {}
+
+    @GetMapping("/deleted")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Project>> getDeletedProjects() {
+        return ResponseEntity.ok(projectService.getSoftDeletedProjects());
+    }
+
+    @PostMapping("/{id}/restore")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Project> restoreProject(@PathVariable Long id) {
+        return ResponseEntity.ok(projectService.restoreProject(id));
+    }
 }

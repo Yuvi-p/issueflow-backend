@@ -10,7 +10,6 @@ import java.util.List;
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Long> {
     
-    // bypassing sql restrictions that have been deleted in soft delete
     @Query(value = "SELECT * FROM projects WHERE is_deleted = true", nativeQuery = true)
-    List<Project> findDeletedProjects();
+    List<Project> findSoftDeletedProjects();
 }

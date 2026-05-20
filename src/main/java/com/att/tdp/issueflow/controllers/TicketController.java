@@ -8,6 +8,7 @@ import com.att.tdp.issueflow.services.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -62,4 +63,17 @@ public class TicketController {
 
     public record UpdateTicketRequest(String title, String description, TicketStatus status,
                                       TicketPriority priority, Long assigneeId, LocalDateTime dueDate) {}
+    
+    @GetMapping("/deleted")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Ticket>> getDeletedTickets(@RequestParam Long projectId) {
+        return ResponseEntity.ok(ticketService.getSoftDeletedTickets(projectId));
+    }
+
+    @PostMapping("/{id}/restore")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Ticket> restoreTicket(@PathVariable Long id) {
+        return ResponseEntity.ok(ticketService.restoreTicket(id));
+    
+    }
 }

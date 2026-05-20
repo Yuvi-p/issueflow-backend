@@ -178,4 +178,16 @@ public class TicketService {
         return ticket.getBlockedBy().stream()
                 .anyMatch(blocker -> blocker.getStatus() != TicketStatus.DONE);
     }
+    
+    public List<Ticket> getSoftDeletedTickets(Long projectId) {
+        return ticketRepository.findSoftDeletedTickets(projectId);
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public Ticket restoreTicket(Long id) {
+        Ticket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+        ticket.setDeleted(false);
+        return ticketRepository.save(ticket);
+    }
 }

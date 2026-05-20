@@ -10,10 +10,9 @@ import java.util.List;
 
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
-    
+
     List<Ticket> findByProjectId(Long projectId);
 
-    // Retrieving deleted tickets by project
-    @Query(value = "SELECT * FROM tickets WHERE is_deleted = true AND project_id = :projectId", nativeQuery = true)
-    List<Ticket> findDeletedByProjectId(@Param("projectId") Long projectId);
+    @Query(value = "SELECT * FROM tickets WHERE project_id = :projectId AND is_deleted = true", nativeQuery = true)
+    List<Ticket> findSoftDeletedTickets(@Param("projectId") Long projectId);
 }

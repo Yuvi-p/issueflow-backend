@@ -55,4 +55,16 @@ public class ProjectService {
         project.setDeleted(true); // soft delete
         projectRepository.save(project);
     }
+
+    public List<Project> getSoftDeletedProjects() {
+        return projectRepository.findSoftDeletedProjects();
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public Project restoreProject(Long id) {
+        Project project = projectRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+        project.setDeleted(false);
+        return projectRepository.save(project);
+    }
 }
